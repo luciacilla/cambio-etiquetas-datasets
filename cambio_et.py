@@ -1,6 +1,6 @@
 import os
 
-def modificar_etiquetas(archivo_entrada, archivo_salida, mapeo_clases):
+def modificar_etiquetas(archivo_entrada, archivo_salida, mapeo_clases, etiquetas_a_eliminar):
     """
     Modifica las etiquetas en un archivo de formato YOLO según el mapeo de clases dado.
     """
@@ -15,19 +15,22 @@ def modificar_etiquetas(archivo_entrada, archivo_salida, mapeo_clases):
                 continue
             
             clase_original = partes[0]
+            if clase_original in etiquetas_a_eliminar:
+                # Si la clase original coincide con la etiqueta a eliminar, omitir esta línea
+                continue
             if clase_original in mapeo_clases:
                 # Reemplazar la clase original por la nueva clase según el mapeo
                 nueva_clase = mapeo_clases[clase_original]
                 partes[0] = nueva_clase
                 # Escribir la línea modificada en el archivo de salida
                 f_salida.write(' '.join(partes) + '\n')
-                print("Etiqueta modificada:", partes)
+                # print("Etiqueta modificada:", partes)
             else:
                 # Si la clase no está en el mapeo, conservar la etiqueta original
                 f_salida.write(linea)
 
 
-def modificar_etiquetas_multiples(directorio_entrada, directorio_salida, mapeo_clases):
+def modificar_etiquetas_multiples(directorio_entrada, directorio_salida, mapeo_clases, etiquetas_a_eliminar):
     """
     Modifica las etiquetas en múltiples archivos de formato YOLO en un directorio.
     """
@@ -40,20 +43,20 @@ def modificar_etiquetas_multiples(directorio_entrada, directorio_salida, mapeo_c
         ruta_entrada = os.path.join(directorio_entrada, nombre_archivo)
         ruta_salida = os.path.join(directorio_salida, nombre_archivo)
         # Modificar las etiquetas para este archivo y guardarlas en el directorio de salida
-        modificar_etiquetas(ruta_entrada, ruta_salida, mapeo_clases)
+        modificar_etiquetas(ruta_entrada, ruta_salida, mapeo_clases, etiquetas_a_eliminar)
 
 
 # Directorios de entrada y salida
-directorio_entrada = "/home/lucia/uni/practicas formacion/Datasets caidas/Dataset 3 _ ['falls', 'sits', 'squats', 'stands']/valid/labels"
-directorio_salida = "/home/lucia/uni/practicas formacion/Datasets caidas/Dataset 3 _ ['falls', 'sits', 'squats', 'stands']/valid/labels_mod"
+directorio_entrada = "/home/lucia/Siali/Datasets/Carretillas gsk/dat_carr_varias_y_aumen/valid (copia)/labels"
+directorio_salida = "/home/lucia/Siali/Datasets/Carretillas gsk/dat_carr_varias_y_aumen/valid (copia)/labels_mod"
 
 # Diccionario para mapear clases antiguas a nuevas
 mapeo_clases = {
-    "0": "0",
-    "1": "1",
-    "2": "1",
-    "3": "2"
+    "1": "0",
 }
 
+# Etiqueta a eliminar
+etiquetas_a_eliminar = ["1"]
+
 # Modificar las etiquetas en múltiples archivos
-modificar_etiquetas_multiples(directorio_entrada, directorio_salida, mapeo_clases)
+modificar_etiquetas_multiples(directorio_entrada, directorio_salida, mapeo_clases, etiquetas_a_eliminar)
